@@ -13,7 +13,7 @@
 6) заменяет номинальные данные на бинарные. 
 
 ```bash 
-pip install pandas
+pip install pandas tabultate
 cd path/to/script.py
 python script.py
 ```

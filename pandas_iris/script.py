@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_bool_dtype
 from utils import grouper
+from tabulate import tabulate
 
 
 file = pd.read_csv("./data/iris.data")
@@ -43,12 +44,13 @@ file_no_nominal = file_no_nominal.drop(columns=cols_to_delete)
 
 print("INITIAL DATASET")
 print("_" * 20)
-print(file.to_string(index=False))
+print(tabulate(file, file.columns, tablefmt="pretty", showindex=False))
+print()
 
 print("NO NUMERIC DATASET")
 print("_" * 20)
-print(file_no_numeric.to_string(index=False))
+print(tabulate(file_no_numeric, file_no_numeric.columns, tablefmt="pretty", showindex=False))
 
 print("NO NOMINAL DATASET")
 print("_" * 20)
-print(file_no_nominal.to_string(index=False))
+print(tabulate(file_no_nominal, file_no_nominal.columns, tablefmt="pretty", showindex=False))
