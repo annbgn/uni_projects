@@ -11,3 +11,9 @@
 5) заменяет числовые данные в колонках на номинальные,
 
 6) заменяет номинальные данные на бинарные. 
+
+```bash 
+pip install pandas
+cd path/to/script.py
+python script.py
+```

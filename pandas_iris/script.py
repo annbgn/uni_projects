@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_numeric_dtype, is_bool_dtype
 from utils import grouper
+
 
 file = pd.read_csv("./data/iris.data")
 # file = pd.read_csv("./data/iris.names")
-file_no_numeric = file.__deepcopy__()
 
 cols = [
     "sepal length in cm",
@@ -15,6 +15,7 @@ cols = [
     "class",
 ]
 file.columns = cols
+file_no_numeric = file.__deepcopy__()
 
 # all numeric to nominal
 for i in file_no_numeric.columns:
@@ -22,10 +23,23 @@ for i in file_no_numeric.columns:
         lower = np.percentile(file_no_numeric[i], 33)
         higher = np.percentile(file_no_numeric[i], 66)
         file_no_numeric[i] = [grouper(x, lower, higher) for x in file_no_numeric[i]]
-file_no_nominal = file.__deepcopy__()
+
 
 # all nominal to boolean
-pass
+file_no_nominal = file_no_numeric.__deepcopy__()
+cols = file.columns.copy()
+cols_to_delete = []
+for i in cols:
+    cols_to_add = []
+    if not is_bool_dtype(file_no_nominal[i]):
+        cols_to_delete.append(i)
+        cols_to_add = file_no_nominal[i].unique()
+        for j in cols_to_add:
+            values = list(map(lambda x: True if x == j else False, file_no_nominal[i]))
+            file_no_nominal.insert(file_no_nominal.shape[1]-1, i+' '+j, values)
+
+file_no_nominal = file_no_nominal.drop(columns=cols_to_delete)
+
 
 print("INITIAL DATASET")
 print("_" * 20)
