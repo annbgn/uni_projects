@@ -1,6 +1,5 @@
-import numpy as np
 import pandas as pd
-from pandas.api.types import is_numeric_dtype, is_bool_dtype
+from pandas.api.types import is_numeric_dtype
 from tabulate import tabulate
 
 # reasd file
@@ -33,24 +32,43 @@ for idx, i in enumerate(file_no_numeric.columns):
         file_no_numeric[i] = pd.cut(
             file_no_numeric[i], labels=["small", "medium", "large"], bins=3
         )
+    elif idx == 10:
+        file_no_numeric[i] = pd.cut(
+            file_no_numeric[i],
+            labels=[
+                "building_windows_float_processed",
+                "building_windows_non_float_processed",
+                "vehicle_windows_float_processed",
+                "vehicle_windows_non_float_processed(none in this database)",
+                "containers",
+                "tableware",
+                "headlamps",
+            ],
+            bins=7,
+        )
 
 # nominal to binary
 file_no_nominal = pd.get_dummies(file_no_numeric, dtype=int)
 
 # 0 and 1 -> -1 and 1
 for idx, i in enumerate(file_no_nominal):
-    if idx not in [0,1]:
-        file_no_nominal[i] = list(map(lambda x: 1 if x else -1 , file_no_nominal[i]))
+    if idx not in [0, 1]:
+        file_no_nominal[i] = list(map(lambda x: 1 if x else -1, file_no_nominal[i]))
 
 # split into train and test
-train=file_no_nominal.sample(frac=0.8,random_state=200)
-test=file_no_nominal.drop(train.index)
-import pdb;
+train = file_no_nominal.sample(frac=0.8, random_state=200)
+test = file_no_nominal.drop(train.index)
+
+import pdb
+
 pdb.set_trace()
 
 
 print(
     tabulate(
-        file_no_nominal, file_no_nominal.columns, showindex=False , # tablefmt="pretty",
+        file_no_nominal,
+        file_no_nominal.columns,
+        showindex=False,
+        # tablefmt="pretty",
     )
 )
