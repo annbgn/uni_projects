@@ -5,7 +5,7 @@ from tabulate import tabulate
 import random
 
 # reasd file
-file = pd.read_csv("./data/glass_c.data")
+file = pd.read_csv("./data/glass.data")
 
 # from glass.names
 classes = [
@@ -64,8 +64,8 @@ for idx, i in enumerate(file_no_nominal):
 file_no_indices = file_no_nominal.drop(["id", "refractive index"], 1)
 
 # split into train and test
-train = file_no_nominal.sample(frac=0.8, random_state=200)
-test = file_no_nominal.drop(train.index)
+train = file_no_indices.sample(frac=0.8, random_state=200)
+test = file_no_indices.drop(train.index)
 
 # select desired input and output columns
 train_input = train.iloc[:, : -len(classes)]
@@ -76,52 +76,69 @@ test_output = test.iloc[:, -len(classes) :]
 
 # perceptron
 learning_rate = 0.01
-epochs_amount = 1000
+epochs_amount = 100
 which_class = "containers"
 # single layer
 attributes_amount = train_input.shape[1] - 2
-initial_weights = np.ones(shape=train_input.shape[1] - 2)
+initial_weights = np.ones(shape=train_input.shape[1])
 bias = 7
 
 
 def proceed(input_attributes):
     net = 0
-    for i in range(attributes_amount):
-        net += int(input_attributes[i]) * initial_weights[i]
+    for idx, attribute in enumerate(input_attributes.iteritems()):
+        if isinstance(attribute[1], int):
+            net += int(attribute[1]) * initial_weights[idx]
+        else:
+            net += int(attribute[1].item()) * initial_weights[idx]
     return net >= bias
 
 
 # todo one func from increase and decrease
 def decrease(input_attributes):
-    for i in range(attributes_amount):
-        if input_attributes[i] == 1:
-            initial_weights[i] -= 1
+    for idx, attribute in enumerate(input_attributes.iteritems()):
+        if int(attribute[1].item()) == 1:
+            initial_weights[idx] -= 1
 
 
 def increase(input_attributes):
-    for i in range(attributes_amount):
-        if input_attributes[i] == 1:
-            initial_weights[i] += 1
+    for idx, attribute in enumerate(input_attributes.iteritems()):
+        if int(attribute[1].item()) == 1:
+            initial_weights[idx] += 1
 
 
-for i in range(epochs_amount):
-    # выберем случайный элемент обучаюзей выборки
-    option = random.randint(0, file_no_indices.shape[0])
-    # Если получилось наше значение which_class
-    if file_no_indices.iloc[option]["class_" + which_class] != 1:
-        # Если сеть выдала True, то наказываем ее
-        if proceed(file_no_indices.iloc[option][: -len(classes)]):
-            decrease(file_no_indices["class_" + which_class].iloc[:, : -len(classes)])
+# train
+for epoch in range(epochs_amount):
+    # select a random element from train set
+    chosen_elem = train.iloc[[random.randint(0, train.shape[0] - 1)]]
+    chosen_attributes = chosen_elem.iloc[:, : -len(classes)]
+
+    # if chosen elem is belongs to chosen class
+    if chosen_elem["class_" + which_class].item() != 1:
+        # if it was not classified as chosen class, decrease weights
+        if not proceed(chosen_attributes):
+            decrease(chosen_attributes)
     else:
-        # Если сеть выдала False, то добавляем веса
-        if not proceed([]):
-            increase([])
+        # if chosen elem does not belong to chosen class, but was classified to it, increase weights
+        if proceed(chosen_attributes):
+            increase(chosen_attributes)
 
-print(
-    tabulate(
-        file_no_nominal,
-        file_no_nominal.columns,
-        showindex=False,
-        # tablefmt="pretty",
-    )
-)
+# test
+success = 0
+failure = 0
+for row in test.iterrows():
+    chosen_attributes = row[1].iloc[: -len(classes)]
+    is_classified = proceed(chosen_attributes)
+    if (
+        is_classified
+        and row[1]["class_" + which_class].item() == 1
+        or not is_classified
+        and row[1]["class_" + which_class].item() == -1
+    ):
+        success += 1
+    else:
+        failure += 1
+
+
+print("success: ", success)
+print("failure: ", failure)
