@@ -76,9 +76,9 @@ test_output = test.iloc[:, -len(classes) :]
 
 # perceptron
 learning_rate = 0.01
-epochs_amount = 100
+epochs_amount = 1000
 which_class = "containers"
-# single layer
+# single layer (https://neuralnet.info/chapter/персептроны)
 attributes_amount = train_input.shape[1] - 2
 initial_weights = np.ones(shape=train_input.shape[1])
 bias = 7
@@ -139,6 +139,72 @@ for row in test.iterrows():
     else:
         failure += 1
 
+print("single layer perceptron success rate: ", success / (success + failure))
+print("success: ", success)
+print("failure: ", failure)
 
+
+# multi layer perceptron
+layer_amount = 3
+initial_weights = np.ones(shape=(train_input.shape[1], layer_amount))
+bias = 7
+
+
+def proceed_multi(input_attributes):
+    initial_weights_transposed = initial_weights.transpose()
+    current_weights = np.zeros(shape=initial_weights_transposed[0].shape)
+    for i in range(layer_amount):
+        current_weights += (initial_weights_transposed[i] * input_attributes.values)[0]
+    net = sum(current_weights)
+    return net >= bias
+
+
+# todo one func from increase_multi and decrease_multi
+def decrease_multi(input_attributes):
+    for idx, attribute in enumerate(input_attributes.iteritems()):
+        if int(attribute[1].item()) == 1:
+            initial_weights[idx][0] -= 1
+
+
+def increase_multi(input_attributes):
+    for idx, attribute in enumerate(input_attributes.iteritems()):
+        if int(attribute[1].item()) == 1:
+            initial_weights[idx][0] += 1
+
+
+# train
+for epoch in range(epochs_amount):
+    # select a random element from train set
+    chosen_elem = train.iloc[[random.randint(0, train.shape[0] - 1)]]
+    chosen_attributes = chosen_elem.iloc[:, : -len(classes)]
+
+    # if chosen elem is belongs to chosen class
+    if chosen_elem["class_" + which_class].item() != 1:
+        # if it was not classified as chosen class, decrease weights
+        if not proceed_multi(chosen_attributes):
+            increase_multi(chosen_attributes)
+    else:
+        # if chosen elem does not belong to chosen class, but was classified to it, increase weights
+        if proceed_multi(chosen_attributes):
+            decrease_multi(chosen_attributes)
+
+# test
+success = 0
+failure = 0
+for row in test.iterrows():
+    chosen_attributes = row[1].iloc[: -len(classes)]
+    is_classified = proceed_multi(chosen_attributes)
+    if (
+        is_classified
+        and row[1]["class_" + which_class].item() == 1
+        or not is_classified
+        and row[1]["class_" + which_class].item() == -1
+    ):
+        success += 1
+    else:
+        failure += 1
+
+
+print("multi layer perceptron success rate: ", success / (success + failure))
 print("success: ", success)
 print("failure: ", failure)
