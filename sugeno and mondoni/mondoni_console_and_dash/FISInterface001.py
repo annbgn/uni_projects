@@ -29,9 +29,9 @@ def PlotTemperature():
 
 def PlotHumidity():
     x = list(np.linspace(0, 100, 400))
-    y1 = [mfHumidiyLow(z) for z in x]
-    y2 = [mfHumidiyAverage(z) for z in x]
-    y3 = [mfHumidiyHigh(z) for z in x]
+    y1 = [mfHumidityLow(z) for z in x]
+    y2 = [mfHumidityAverage(z) for z in x]
+    y3 = [mfHumidityHigh(z) for z in x]
     dd = {
         "Humidity": 3 * x,
         "MF": y1 + y2 + y3,
