@@ -1,5 +1,5 @@
 ## meyers-briggs 16 personalities types
 
-###sheme
+### scheme
 
 ![](https://github.com/annbgn/uni_projects/blob/master/clips/blueprint.png)
