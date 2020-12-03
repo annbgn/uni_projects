@@ -1,19 +1,19 @@
 from BasicFuzzyFunctions import *
 
 
-def mfBudgetLow(x):
+def mfFeesLow(x):
     return GZ(x, 40, 60)
 
 
-def mfBudgetAverage(x):
+def mfFeesAverage(x):
     return GTrap(x, 20, 40, 60, 75)
 
 
-def mfBudgetHigh(x):
+def mfFeesHigh(x):
     return GTrap(x, 40, 60, 90, 100)
 
 
-def mfBudgetGreat(x):
+def mfFeesGreat(x):
     return GS(x, 80, 90)
 
 
