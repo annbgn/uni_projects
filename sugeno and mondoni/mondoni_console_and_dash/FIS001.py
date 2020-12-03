@@ -1,7 +1,17 @@
 from MFFunctions001 import *
 
 Temperature = Humidity = Comfort = 0
-TemperatureGreat = TemperatureHigh = TemperatureAverage = TemperatureLow = HumidityHigh = HumidityAverage = HumidityLow = ComfortExcellent = ComfortGood = ComfortSatisfactory = ComfortBad = 0
+TemperatureGreat = (
+    TemperatureHigh
+) = (
+    TemperatureAverage
+) = (
+    TemperatureLow
+) = (
+    HumidityHigh
+) = (
+    HumidityAverage
+) = HumidityLow = ComfortExcellent = ComfortGood = ComfortSatisfactory = ComfortBad = 0
 ComfortArray = {x: 0 for x in range(20, 51)}
 
 
@@ -22,8 +32,14 @@ def FuzzyInference():
     global TemperatureGreat, TemperatureHigh, TemperatureAverage, TemperatureLow, HumidityHigh, HumidityAverage, HumidityLow, ComfortExcellent, ComfortGood, ComfortSatisfactory, ComfortBad
 
     ComfortExcellent = min(TemperatureGreat, HumidityLow)
-    ComfortGood = max(min(TemperatureGreat, HumidityAverage), min(TemperatureHigh, HumidityLow))
-    ComfortSatisfactory = max(min(TemperatureGreat, HumidityHigh), min(TemperatureHigh, HumidityAverage), min(TemperatureAverage, HumidityLow))
+    ComfortGood = max(
+        min(TemperatureGreat, HumidityAverage), min(TemperatureHigh, HumidityLow)
+    )
+    ComfortSatisfactory = max(
+        min(TemperatureGreat, HumidityHigh),
+        min(TemperatureHigh, HumidityAverage),
+        min(TemperatureAverage, HumidityLow),
+    )
     ComfortBad = max(TemperatureLow, min(HumidityHigh, 1 - TemperatureGreat))
 
 
