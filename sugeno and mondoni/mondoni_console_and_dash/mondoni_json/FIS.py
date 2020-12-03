@@ -62,7 +62,9 @@ class Literal(object):
 
     def Calc(self):
         X = self.Var
-        import pdb;pdb.set_trace()
+        import pdb
+
+        pdb.set_trace()
         T = X.LTerms[self.LTName]
         v = T.Value
         if self.Neg:

@@ -4,7 +4,8 @@ Star -> Oscar
 """
 from MFFunctions001 import *
 
-Budget = Star = Oscar = 0
+global Budget, Star, Oscar, Fees
+Budget = Star = Oscar = Fees = 0
 BudgetGreat = (
     BudgetHigh
 ) = (
@@ -21,7 +22,7 @@ OscarArray = {x: 0 for x in range(20, 51)}
 
 def Fuzzification():
     global Budget, Star
-    global BudgetGreat, BudgetHigh, BudgetAverage, BudgetLow, StarHigh, StarAverage, StarLow, FeesGreat, FeesHigh, FeesAverage,FeesLow 
+    global BudgetGreat, BudgetHigh, BudgetAverage, BudgetLow, StarHigh, StarAverage, StarLow, FeesGreat, FeesHigh, FeesAverage, FeesLow
 
     FeesGreat = mfFeesGreat(Budget)
     FeesHigh = mfFeesHigh(Budget)
@@ -33,12 +34,10 @@ def Fuzzification():
 
 
 def FuzzyInference():
-    global BudgetGreat, BudgetHigh, BudgetAverage, BudgetLow, StarHigh, StarAverage, StarLow, OscarExcellent, OscarGood, OscarSatisfactory, OscarBad, FeesGreat, FeesHigh, FeesAverage,FeesLow
+    global BudgetGreat, BudgetHigh, BudgetAverage, BudgetLow, StarHigh, StarAverage, StarLow, OscarExcellent, OscarGood, OscarSatisfactory, OscarBad, FeesGreat, FeesHigh, FeesAverage, FeesLow
 
     OscarExcellent = min(BudgetGreat, StarLow)
-    OscarGood = max(
-        min(BudgetGreat, StarAverage), min(BudgetHigh, StarLow)
-    )
+    OscarGood = max(min(BudgetGreat, StarAverage), min(BudgetHigh, StarLow))
     OscarSatisfactory = max(
         min(BudgetGreat, StarHigh),
         min(BudgetHigh, StarAverage),
@@ -86,13 +85,20 @@ def Init():
 
 def Terminate():
     global Oscar
+    Fees = (
+        FeesGreat * 1000 * Budget
+        + FeesHigh * 100 * Budget
+        + FeesLow * 10 * Budget
+        + FeesLow * Budget
+    ) / (FeesGreat + FeesHigh + FeesAverage + FeesLow)
 
     print("Oscar =", Star)
-    print("Fees =", (FeesGreat*1000*Budget + FeesHigh*100*Budget+FeesLow*10*Budget+FeesLow*Budget)/ (FeesGreat+FeesHigh+FeesAverage+FeesLow))
+    print("Fees =", Fees)
 
 
 def Main():
-    Init()
+    if __name__ == "__main__":
+        Init()
     Run()
     Terminate()
 
