@@ -5,10 +5,6 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
 import FIS001 as fis
-
-import pandas as pd
-import numpy as np
-import plotly.express as px
 from MFFunctions001 import *
 
 
@@ -35,11 +31,11 @@ app.layout = html.Div(
                             max=100,
                             step=5,
                         ),
-                        html.Span(children="Star: ", className="FISText"),
+                        html.Span(children="Oscar: ", className="FISText"),
                         dcc.Input(
-                            id="Star",
+                            id="Oscar",
                             type="number",
-                            placeholder="Star...",
+                            placeholder="Oscar...",
                             value="",
                             className="FISInput",
                             min=0,
@@ -65,15 +61,6 @@ app.layout = html.Div(
                 "align-items": "center",
             },
         ),
-        html.Div(
-            id="fugures",
-            style={
-                "display": "flex",
-                "flex-direction": "column",
-                "justify-content": "center",
-                "align-items": "center",
-            },
-        ),
     ]
 )
 
@@ -81,23 +68,24 @@ app.layout = html.Div(
 @app.callback(
     Output("result", "children"),
     [Input("enter", "n_clicks")],
-    [State("Budget", "value"), State("Star", "value")],
+    [State("Budget", "value"), State("Oscar", "value")],
 )
 def FormResult(n, s, p):
     if n is not None and n > 0:
         try:
             fis.Budget = float(s)
-            fis.Star = float(p)
+            fis.Oscar = float(p)
             fis.Run()
         except:
-            return "Oscar = "
-        return "Oscar = " + str(fis.Oscar)
+            return "Fees = "
+        return "Fees = " + str(fis.Budget * 100) + "Stars = " + str(fis.Oscar)
     else:
-        return "Oscar = "
+        return "Fees = " + "         Stars = "
 
 
 @app.callback(
     [Output("fig1", "style"), Output("fig2", "style"), Output("fig3", "style")],
+    [Input("mfs", "n_clicks")],
     [State("fig1", "style")],
 )
 def TogleDisplay(n, s):
